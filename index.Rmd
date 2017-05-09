@@ -1,0 +1,52 @@
+---
+title: "TIMMS 2015 8th Grade Math Data"
+output: 
+  html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+# library(flexdashboard)
+library(readxl)
+library(dplyr)
+library(purrr)
+library(ggplot2)
+library(tidyr)
+source("tidy_data.R")
+```
+
+```{r, include=FALSE}
+timms_country_avg <- timms_data %>% 
+  group_by(country) %>% 
+  summarise(median_correct = median(percent_correct, na.rm = TRUE),
+            min_correct = min(percent_correct, na.rm = TRUE),
+            max_correct = max(percent_correct, na.rm = TRUE),
+            percentile_25 = quantile(percent_correct, na.rm = TRUE, probs = 0.25),
+            percentile_75 = quantile(percent_correct, na.rm = TRUE, probs = 0.75)) %>% 
+  gather(key = 'statistic', value = 'value', -country)
+```
+
+
+### Distribution of Average Percent Correct by Country
+
+```{r, fig.height=15, fig.width=10, include=FALSE}
+timms_country_avg %>% 
+  mutate(country = gsub(" \\(9\\)", "", country)) %>% 
+  ggplot(aes(x = reorder(country, value), y = value)) +
+    geom_boxplot(aes(fill = country), alpha = 0.7) +
+    coord_flip() +
+    xlab("Country") + ylab("Avg Percent of Questions Correct") + 
+    theme_minimal(base_size = 16) + 
+    guides(fill = FALSE)
+```
+
+```{r, fig.height=15, fig.width=10, message=FALSE, warning=FALSE, echo=FALSE}
+library(rAmCharts)
+library(pipeR)
+amBoxplot(percent_correct~country, data=timms_data, 
+          xlab = "Country", main = "Percent of Students Answering Question Correctly",
+          horiz=TRUE, width = "100%", height = "100%")  %>>%
+  plot(width = "100%", height = "1800px")
+```
+
+
+
