@@ -1,5 +1,5 @@
 ---
-title: "TIMMS 2015 8th Grade Math Data"
+title: "TIMSS 2015 8th Grade Math Data"
 output: 
   html_document
 ---
@@ -15,7 +15,7 @@ source("tidy_data.R")
 ```
 
 ```{r, include=FALSE}
-timms_country_avg <- timms_data %>% 
+timss_country_avg <- timss_data %>% 
   group_by(country) %>% 
   summarise(median_correct = median(percent_correct, na.rm = TRUE),
             min_correct = min(percent_correct, na.rm = TRUE),
@@ -29,7 +29,7 @@ timms_country_avg <- timms_data %>%
 ### Distribution of Average Percent Correct by Country
 
 ```{r, fig.height=15, fig.width=10, include=FALSE}
-timms_country_avg %>% 
+timss_country_avg %>% 
   mutate(country = gsub(" \\(9\\)", "", country)) %>% 
   ggplot(aes(x = reorder(country, value), y = value)) +
     geom_boxplot(aes(fill = country), alpha = 0.7) +
@@ -42,7 +42,7 @@ timms_country_avg %>%
 ```{r, fig.height=15, fig.width=10, message=FALSE, warning=FALSE, echo=FALSE}
 library(rAmCharts)
 library(pipeR)
-amBoxplot(percent_correct~country, data=timms_data, 
+amBoxplot(percent_correct~country, data=timss_data, 
           xlab = "Country", main = "Percent of Students Answering Question Correctly",
           horiz=TRUE, width = "100%", height = "100%")  %>>%
   plot(width = "100%", height = "1800px")
