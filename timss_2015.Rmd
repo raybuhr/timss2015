@@ -1,0 +1,33 @@
+---
+title: "TIMSS 2015 8th Grade Math Comparison"
+author: "Raymond Buhr"
+date: "May 9, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+library(dplyr)
+library(readr)
+library(tidyr)
+library(highcharter)
+
+timss_data <- read_tsv("TIMSS_2015_NO_BM.tsv")
+country_names <- read_tsv("2015_timss_country.tsv")
+
+plot_data <- timss_data %>% 
+  select(country, Percent_Correct=correct_ratio_per_question, Question=question_rank) %>% 
+  mutate(Percent_Correct=round(Percent_Correct, 2)) %>% 
+  left_join(country_names, by = 'country') %>% 
+  select(-country, -international_rank, -dominant_gender_country) %>% 
+  rename(Country=country_full)
+```
+
+### Percent of Students Answering Each Question Correctly by Country
+
+```{r, fig.height=10, fig.width=10, echo=FALSE, warning=FALSE, message=FALSE}
+hchart(plot_data, "line", hcaes(x=Question, y=Percent_Correct, group=Country)) %>% 
+  hc_yAxis(max=1)
+```
+
+
