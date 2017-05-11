@@ -18,3 +18,5 @@ for(i in 2:215) {
 }
 
 timms_data <- gather(data = timms_data, key = "question", value = "percent_correct", -country)
+
+# write_csv(timms_data, "2015_timss_data.csv")
